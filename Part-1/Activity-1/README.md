@@ -32,6 +32,11 @@
 - See UWA's Cyber Security Protocols
 https://www.uwa.edu.au/about/campus-services/cyber-security
 
+**Security Benefits**
+- Gain cyber security knowledge useful for protecting UWA's systems/data and personal information
+- Gain skills for risk mitigation and response
+- Identification of cyber risks
+
 ---
 
 ### 3. Cyber Security Incident Reporting and Response
@@ -44,5 +49,9 @@ https://www.uwa.edu.au/about/campus-services/cyber-security
 **Evidence**
 - See UWA's Cyber Security Incident Reporting
 https://www.uwa.edu.au/about/campus-services/cyber-security/reporting-cyber-security-incidents
+
+**Security Benefits**
+- Fast incident response
+- Better incident identification
 
 ---
