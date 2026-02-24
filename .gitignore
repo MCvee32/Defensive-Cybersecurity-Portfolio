@@ -1,0 +1,44 @@
+# Sensitive Information - NEVER COMMIT THESE
+*.key
+*.pem
+*.pfx
+*.p12
+passwords.txt
+secrets.env
+secrets.yaml
+.env
+.env.local
+credentials.json
+*.apikey
+token.txt
+
+# Sensitive data patterns
+*password*
+*secret*
+*credential*
+*token*
+
+# IDE and Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# System files
+*.log
+*.pid
+*.seed
+
+# Dependencies
+node_modules/
+venv/
+__pycache__/
+*.pyc
+
+# Temporary files
+tmp/
+temp/
+*.tmp
