@@ -4,8 +4,8 @@ This portfolio documents my completion of cybersecurity activities across two pa
 
 ## Portfolio Structure
 
-- **Part-1/** - First set of cybersecurity activities
-- **Part-2/** - Second set of cybersecurity activities
+- **Part-1/** - Part 1 Activities
+- **Part-2/** - Part 2 Activities
 - **Documentation/** - Progress tracking and general resources
 - **Supporting-Evidence/** - Additional supporting materials
 
