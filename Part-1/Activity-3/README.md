@@ -13,6 +13,10 @@
 - Protects personal data from hackers
 - Increases privacy when online
 
+**Evidence**
+- VPN on my laptop
+<img width="1440" height="900" alt="Screenshot 2026-02-25 at 1 04 45 pm" src="https://github.com/user-attachments/assets/e073e4fb-7781-4255-b6ea-cb996df55a59" />
+
 ---
 
 ### 2. Security Cameras
@@ -28,6 +32,8 @@
 - Provides evidence for cases of theft or damage to property
 - Allows remote monitoring of my home
 
+**Evidence**
+
 ---
 
 ### 3. Security Alarms
@@ -41,6 +47,9 @@
 **Security Benefits**
 - Alerts me immediately to potential break-ins
 - Deters thiefs and intruders
+
+**Evidence**
+
 
 ---
 
