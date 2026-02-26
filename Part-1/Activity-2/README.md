@@ -12,12 +12,12 @@
 - All access attempts are logged in a system
 
 **Security Benefits**
-- Prevents unauthorised access to restricted areas
-- Protects physical IT infrastructure or assets from destruction, damage, or tampering
-- Creates a log of who accessed specific locations and when
+- Prevents unauthorised access to restricted areas (Confidentiality)
+- Protects physical IT infrastructure or assets from destruction, damage, or tampering (Integrity)
+- Creates a log of who accessed specific locations and when (Non-Repudiation)
 
 **Evidence**
-- Card Reader at door of restricted room at my local library.
+- Card reader at door of restricted room at my local library.
 ![IMG_4731](https://github.com/user-attachments/assets/bf621f10-d2cb-4a3e-8847-4b9b77a4cdff)
 
 ---
@@ -31,9 +31,9 @@
 - Firewalls restrict communication between public and internal networks
 
 **Security Benefits**
-- Databases/servers are on their own protected network
+- Databases/servers are on their own protected network (Integrity)
 - Reduces risk of attacks to internal systems
-- Protects sensitive data from public users
+- Protects sensitive data from public users (Integrity)
 
 **Evidence**
 - Example from UWA. Segments Public Wifi (UnifiGuest) from internal networks.
@@ -43,19 +43,18 @@
 
 ### 3. Security Cameras
 
-**Location/System** Buildings
+**Location/System** Buildings / Doors / Entry Points
 
 **How It Works**
-- Login attempts, network traffic, and card access events are logged (who, when, and where)
-- Security/IT teams monitor logs for suspicious behaviour
-- Logs are kept as evidence
+- Security cameras are usually set up in entry points of buildings, restricted areas or high traffic areas
+- Allows remote monitoring of these areas, aswell as a video log of suspicious events/incidents
 
 **Security Benefits**
-- Early threat detection
-- Provides evidence for investigations
-- Ensures accountability and compliance
+- Deters thiefs, criminals, or anyone with malicious intent
+- Provides evidence for investigations (Non-repudiation)
 
 **Evidence**
-- 
+- Security camera in my local gym
+![IMG_4734](https://github.com/user-attachments/assets/050da875-ea83-416e-a37f-86da4d9f614c)
 
 ---
