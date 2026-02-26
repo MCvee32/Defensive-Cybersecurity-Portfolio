@@ -16,8 +16,9 @@
 <img width="1404" height="810" alt="Screenshot 2026-02-24 at 1 13 53 pm" src="https://github.com/user-attachments/assets/ed281390-42e0-40d7-80d7-6637463f89e9" />
 
 **Security Benefits**
-- Prevents unauthorised access
-- Protects user accounts and data
+- Prevents unauthorised access (Confidentiality)
+- Protects user accounts and data (Integrity)
+- Authorised users are able to access their account (Accessibility)
 
 ---
 
