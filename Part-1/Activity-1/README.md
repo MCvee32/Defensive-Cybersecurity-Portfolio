@@ -19,6 +19,7 @@
 - Prevents unauthorised access (Confidentiality)
 - Protects user accounts and data (Integrity)
 - Authorised users are able to access their account (Accessibility)
+- Also achieves authenticity as identity is verified through MFA
 
 ---
 
