@@ -17,7 +17,8 @@
 - Creates a log of who accessed specific locations and when
 
 **Evidence**
-
+- Card Reader at door of restricted room at my local library.
+![IMG_4731](https://github.com/user-attachments/assets/bf621f10-d2cb-4a3e-8847-4b9b77a4cdff)
 
 ---
 
@@ -40,9 +41,9 @@
 
 ---
 
-### 3. Logging, Monitoring, and Audit Trails
+### 3. Security Cameras
 
-**Location/System** Authentication Systems / Network Infrastructures / Card Access Systems
+**Location/System** Buildings
 
 **How It Works**
 - Login attempts, network traffic, and card access events are logged (who, when, and where)
@@ -55,6 +56,6 @@
 - Ensures accountability and compliance
 
 **Evidence**
-
+- 
 
 ---
