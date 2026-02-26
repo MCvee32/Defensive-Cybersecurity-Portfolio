@@ -16,6 +16,9 @@
 - Protects physical IT infrastructure or assets from destruction, damage, or tampering
 - Creates a log of who accessed specific locations and when
 
+**Evidence**
+
+
 ---
 
 ### 2. Public Wifi Network Segmentation
@@ -30,6 +33,10 @@
 - Databases/servers are on their own protected network
 - Reduces risk of attacks to internal systems
 - Protects sensitive data from public users
+
+**Evidence**
+- Example from UWA. Segments Public Wifi (UnifiGuest) from internal networks.
+<img width="603" height="1311" alt="IMG_4730" src="https://github.com/user-attachments/assets/631a4284-8d0c-46f4-af31-339ad27cd860" />
 
 ---
 
@@ -46,5 +53,8 @@
 - Early threat detection
 - Provides evidence for investigations
 - Ensures accountability and compliance
+
+**Evidence**
+
 
 ---
