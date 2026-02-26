@@ -10,8 +10,8 @@
 - It masks my IP address and location from external networks
 
 **Security Benefits**
-- Protects personal data from hackers
-- Increases privacy when online
+- Protects personal data from hackers (Integrity)
+- Increases privacy when online (Confidentiality)
 
 **Evidence**
 - VPN on my laptop
@@ -29,10 +29,12 @@
 
 **Security Benefits**
 - Deters thiefs and intruders
-- Provides evidence for cases of theft or damage to property
+- Provides evidence for cases of theft or damage to property (Non-Repudiation)
 - Allows remote monitoring of my home
 
 **Evidence**
+- Security camera in my home
+![IMG_4733](https://github.com/user-attachments/assets/02d4785e-d0ab-4bd0-b229-c50a62591b47)
 
 ---
 
@@ -49,7 +51,8 @@
 - Deters thiefs and intruders
 
 **Evidence**
-
+- Security Alarm system in my home
+![IMG_4732](https://github.com/user-attachments/assets/dab8b63b-ad9c-42f5-b1bf-b7c2fd2bacf0)
 
 ---
 
