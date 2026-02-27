@@ -11,9 +11,7 @@ This module focuses on the following:
 
 **Evidence**
 - Module 4 from TEQSA's Enchancing Cyber Security Awareness Training Program
-<img width="1440" height="900" alt="Screenshot 2026-02-27 at 10 17 26 am" src="https://github.com/user-attachments/assets/fb984d10-1539-4f33-abe6-23759395a79f" />
-
-- Completion of Module 4
 <img width="1440" height="900" alt="Screenshot 2026-02-27 at 10 00 47 am" src="https://github.com/user-attachments/assets/ae680953-e930-4b0d-a044-c2cdee63b748" />
 
-
+- Completion of Module 4
+<img width="1440" height="900" alt="Screenshot 2026-02-27 at 10 17 26 am" src="https://github.com/user-attachments/assets/fb984d10-1539-4f33-abe6-23759395a79f" />
