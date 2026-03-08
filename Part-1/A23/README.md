@@ -8,5 +8,6 @@ I chose to download a VPN in order to secure my netwrok connection. This VPN enc
 - Increases privacy when online
 
 **Evidence**
+- VPN installed and running on my laptop
 ![Screenshot 2026-02-25 at 1 04 45 pm](https://github.com/user-attachments/assets/67588e17-2567-4c46-bfd5-9bc6ab59b5cd)
 
