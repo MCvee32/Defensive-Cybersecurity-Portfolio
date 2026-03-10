@@ -24,7 +24,7 @@ Data Encryption
 <img width="1440" height="900" alt="Screenshot 2026-03-10 at 3 34 17 pm" src="https://github.com/user-attachments/assets/ed01c90f-68ae-4487-947c-4b6b16b12e94" />
 
 5. Decrypted Record
-![Uploading Screenshot 2026-03-10 at 3.34.44 pm.png…]()
+<img width="1440" height="900" alt="Screenshot 2026-03-10 at 3 34 44 pm" src="https://github.com/user-attachments/assets/f0a8697e-7b0b-41e2-a15e-a21c7d066950" />
 
 **Purpose**
 - Protects patient confidentiality by ensuring medical data is encrypted, even if system is compromised encrypted data cannot easily be read by attackers.
