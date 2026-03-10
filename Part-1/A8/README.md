@@ -13,3 +13,5 @@ AES encrypts data transmitted between devices and the cloud, ensuring confidenti
 
 **Evidence/Example**
 The Apple Watch uses AES-256 encryption for secure communication with its paired phone and Apple's iCloud. Data such as health metrics and messages are encrypted both in transit and at rest. This ensures confidentiality and integrity of user information.
+- Details about Apple Wacth encryption
+https://support.apple.com/en-au/guide/security/secc7d85209d/web#:~:text=Further%20communication%20between%20these%20devices,see%20Keybags%20for%20Data%20Protection.
