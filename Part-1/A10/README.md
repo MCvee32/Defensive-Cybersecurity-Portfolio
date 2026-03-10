@@ -17,4 +17,4 @@ To protect indivdual privacy by removing identifiable information from stored da
 
 **Evidence**
 - Youtube video discussing data anonymisation on patient data for research
-[![IMG_4743](https://github.com/user-attachments/assets/3c539cc5-aae6-4a43-a800-d3f47d9f6b9a)](https://www.youtube.com/watch?v=Q9-jh7TsXF0&t=8s)
+https://www.youtube.com/watch?v=Q9-jh7TsXF0&t=8s
