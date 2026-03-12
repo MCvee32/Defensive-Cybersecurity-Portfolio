@@ -4,11 +4,8 @@ This portfolio documents my completion of cybersecurity activities across two pa
 
 ## Portfolio Structure
 
-- **Part-1** - Part 1 Activities
-- **Part-2** - Part 2 Activities
-
-## Quick Navigation
-
+- **Part 1 Activities**
+- **Part 2 Activities**
 
 ---
 *This portfolio is being actively updated as activities are completed.*
