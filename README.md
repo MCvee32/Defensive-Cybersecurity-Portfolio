@@ -4,8 +4,8 @@ This portfolio documents my completion of cybersecurity activities across two pa
 
 ## Portfolio Structure
 
-- **[Part 1 Activities](./Part%201/)** – Activities completed in Part 1, including documentation and code.  
-- **[Part 2 Activities](./Part%202/)** – Activities completed in Part 2, including documentation and code.  
+- **[Part 1 Activities](./Part-1/)** – Activities completed in Part 1, including documentation and code.  
+- **[Part 2 Activities](./Part-2/)** – Activities completed in Part 2, including documentation and code.  
 
 ---
 *This portfolio is being actively updated as activities are completed.*
