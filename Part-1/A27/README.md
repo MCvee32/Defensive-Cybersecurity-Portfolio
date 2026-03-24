@@ -7,7 +7,7 @@ SQL injection is a vulnerability that allows attackers to interfere with a web a
 To demonstrate this vulnerability I created the following program.
 
 Step 1. Database Creation
-'''python
+```python
 def setup_database(conn):
     cursor = conn.cursor()
 
@@ -31,10 +31,10 @@ def setup_database(conn):
     # Save the changes to the database
     conn.commit()
     print("Database created with 2 users.\n")
-'''
+```
 
 Step 2. Vulnerability Implementation
-'''python
+```python
 def vulnerable_login(conn, username: str, password: str):
     # Vulnerability: user input is directly inserted into the SQL string.
     # An attacker can break out of the string using a single quote (')
@@ -49,11 +49,11 @@ def vulnerable_login(conn, username: str, password: str):
     cursor.execute(query)
 
     return cursor.fetchone()
-'''
+```
 
 Step 3. SQL Injection
 - Shows a normal unsuccessful login and a SQL injection
-'''python
+```python
 conn = sqlite3.connect("Database")
 setup_database(conn)
 
@@ -70,7 +70,7 @@ if row:
     print(f"Bypassed! Logged in as: username={row[0]}")
 
 conn.close()
-'''
+```
 - This works because the query requires both username and password to match, but the OR '1'='1' part adds a condition that is always true, which overrides the rest of the logic. Since OR only needs one side to be true, the database ignores the failed username/password check and returns a row anyway.
 
 **Program Output**
