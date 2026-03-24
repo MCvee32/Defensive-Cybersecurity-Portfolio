@@ -37,8 +37,7 @@ Step 2. Vulnerability Implementation
 ```python
 def vulnerable_login(conn, username: str, password: str):
     # Vulnerability: user input is directly inserted into the SQL string.
-    # An attacker can break out of the string using a single quote (')
-    # and inject their own SQL logic
+    # An attacker can break out of the string using a single quote (') and inject their own SQL logic
     query = f"SELECT * FROM users WHERE username = '{username}' AND password = '{password}'"
 
     print(f"Query: {query}")
