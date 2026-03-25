@@ -1,10 +1,10 @@
 # Part 1 - A16: Discover 3 Local Security Incidents
 
-### Incident 1: MediSecure Data Breach (2024)
-In 2024, MediSecure, an eScript provider company, experienced a cyberattack that exposed personal data of approzimately 12 million Australians. The exact attack method was not publicly disclosed. However, it is reported that attackers were able to gain unauthorised access to MediSecure's systems and stole sensitive medical information, including names, dates of brith, addresses, Medicare numbers, and prescription details. 
+### Incident 1: Security Guards Charged For Alleged Assualt in Scarborough (2025)
+Two security guards at the Lookout Scarborough bar were charged following an altercation with a 39-year-old man and woman. One of the guards were caught on video swinging at a man on the floor, whilst the other guard allegedly stole a phone from the woman. The victims sustained injuries and charges included bodily harm, assault, willful destruction of evidence, and stealing. This highlights security issues over security providing protection over harm, importance of training and adherence to the law, and lack of monitoring , allowing security guards to escalate violence and theft.
 
 **Evidence**
-https://www.abc.net.au/news/2024-07-18/medisecure-data-cyber-hack-12-million/104112736
+https://www.abc.net.au/news/2025-04-14/security-guards-charged-alleged-attack-scarborough-bar/105173988
 
 ### Incident 2: Harry Perkins Institute Ransomware Attack (2024)
 In 2024, Harry Perkins Institute of Medical Research in Perth was victim to a cybersecurity breach affecting its internal servers. The orgainisation launched an investigation after reports that a ransomware group may have accessed and stolen data while demanding a ransom of $500,000. Cybersecurity experts were engaged in responding and re-establishing a secure network.
