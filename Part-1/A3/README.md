@@ -2,20 +2,18 @@
 
 ## Security Concepts Discovered
 
-### 1. VPN (Virtual Private Network)
-**Location/System** Network / Personal Devices
+### 1. Door and Window Locks
+**Location/System** Entry Points
 
 **How It Works**
-- My VPN encrypts internet traffic between my devices and a remote server
-- It masks my IP address and location from external networks
+- All possible entry points including doors and windows are protected with locks, that can only be unlocked from inside or with a key.
 
 **Security Benefits**
-- Protects personal data from hackers (Integrity)
-- Increases privacy when online (Confidentiality)
+-	Protects entry points of house from thieves and criminals
 
 **Evidence**
-- VPN on my laptop
-<img width="1440" height="900" alt="Screenshot 2026-02-25 at 1 04 45 pm" src="https://github.com/user-attachments/assets/e073e4fb-7781-4255-b6ea-cb996df55a59" />
+- Back Door Lock
+![image](https://github.com/user-attachments/assets/5a74a0e1-b73a-4a2d-9dde-30975a180537)
 
 ---
 
