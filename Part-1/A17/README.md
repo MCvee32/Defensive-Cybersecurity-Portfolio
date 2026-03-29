@@ -40,13 +40,13 @@ Key is needed to open and shut shutter doors often used in retail stores.
 **Purpose**
 Protects items and money stored in a vending machine. Requires key to gain access.
 
-### Lock 9: 
-
+### Lock 9: Safe Lock
+![IMG_4766](https://github.com/user-attachments/assets/81dd3ceb-8b66-4420-8722-c220acf63256)
 **Purpose**
+Stores valuables in a physically secure box. Requires PIN to gain access.
 
 
-### Lock 10: 
-
+### Lock 10: Deadbolt Lock
+![IMG_4767](https://github.com/user-attachments/assets/36e125e4-2ed0-4556-bd47-686b248b9334)
 **Purpose**
-
-
+Adds strong physical security to doors requires key to unlock.
