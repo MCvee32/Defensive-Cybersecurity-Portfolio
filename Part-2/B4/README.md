@@ -1,4 +1,4 @@
-# Part 2 - B4: B4. Participate in 3 in-class activities in labs
+# Part 2 - B4: Participate in 3 in-class activities in labs
 
 ### Activity 1: Creating an Encryption Algorithm
 - Each group created their own encryption algorithm
