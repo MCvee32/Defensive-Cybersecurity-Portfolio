@@ -8,9 +8,9 @@ The fix for CVE-2026-0672, which rejected control characters in http.cookies.Mor
 Claude provides a description of the three vulnerable paths in the code:
 1. Morsel.update() — directly updated the internal dictionary without validation. 
 2. The __ior__ method (implementing |=) was entirely missing, falling back to default behavior with no validation.
-3. BaseCookie.js_output() generated JavaScript output without the same sanitization applied to output().
+3. BaseCookie.js_output() generated JavaScript output without the same sanitization applied to output().  
 **Impact:**  
-<img width="696" height="205" alt="Screenshot 2026-04-06 at 9 37 03 am" src="https://github.com/user-attachments/assets/835deb67-8ed3-4774-b095-bcd83d1a2d8f" />
+<img width="696" height="205" alt="Screenshot 2026-04-06 at 9 37 03 am" src="https://github.com/user-attachments/assets/835deb67-8ed3-4774-b095-bcd83d1a2d8f" />  
 
 **The Fix:**  
 <img width="680" height="394" alt="Screenshot 2026-04-06 at 9 37 05 am" src="https://github.com/user-attachments/assets/25db08f5-d865-4c4e-b9ca-0ff9ae3d714c" />
@@ -22,16 +22,16 @@ Python tried to block control characters in cookies, but missed some code paths:
 1. Morsel.update()
 2. |= operator
 3. unpickling
-3. BaseCookie.js_output() (no output validation)
+3. BaseCookie.js_output() (no output validation)  
 **Impact:**  
 Attackers can bypass validation, leading to:
 - HTTP response splitting
 - Session manipulation
-- Possible XSS / header injection
+- Possible XSS / header injection  
 **The Fix:**  
 ChatGPT highlights one primary fix and three mitigations (when primary fix isn't possible)
 Primary Fix: Upgrading Python to a patched version  
-<img width="696" height="623" alt="Screenshot 2026-04-06 at 9 18 30 am" src="https://github.com/user-attachments/assets/1937a66b-9cb4-4610-97ae-4cc678036fcd" />
+<img width="696" height="623" alt="Screenshot 2026-04-06 at 9 18 30 am" src="https://github.com/user-attachments/assets/1937a66b-9cb4-4610-97ae-4cc678036fcd" />  
 Mitigations:  
 1. Sanitise Cookie Input  
 <img width="693" height="359" alt="Screenshot 2026-04-06 at 9 16 40 am" src="https://github.com/user-attachments/assets/2f462aac-0c01-4814-a55f-6d139e46782d" />
@@ -46,15 +46,15 @@ Gemini highlights four specific "leaks" where validation is missing:
 1. Morsel.update(): Updating cookie attributes via dictionary methods.
 2. The |= operator: Merging cookie attributes.
 3. Unpickling: Deserializing Morsel objects from a pickle stream.
-4. BaseCookie.js_output(): Generating JavaScript-formatted cookie strings.
+4. BaseCookie.js_output(): Generating JavaScript-formatted cookie strings.  
 
 **Impact:**  
 Possible:
 - HTTP Response Splitting
-- Session Hijacking
+- Session Hijacking  
 
 **The Fix:**  
-Provides a patch similar to the official CPython fix, for when upgrading isn't possible. As well as mitigations.
+Provides a patch similar to the official CPython fix, for when upgrading isn't possible. As well as mitigations.  
 Fix:  
 <img width="549" height="582" alt="Screenshot 2026-04-06 at 9 26 58 am" src="https://github.com/user-attachments/assets/424bd17c-d41a-4bcc-8ac0-edaf3406d267" />
 Mitigations:  
