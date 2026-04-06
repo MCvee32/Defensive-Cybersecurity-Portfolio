@@ -1,4 +1,4 @@
-<img width="549" height="582" alt="Screenshot 2026-04-06 at 9 26 58 am" src="https://github.com/user-attachments/assets/7038dd3e-1188-4efc-b9df-9d153cfa8870" /># Part 2 - B29: Find a CVE in this year and fix it using three different generative AI systems (e.g., ChatGPT, Gemini), comparing the consistency
+# Part 2 - B29: Find a CVE in this year and fix it using three different generative AI systems (e.g., ChatGPT, Gemini), comparing the consistency
 ### CVE-2026-3644: Incomplete control character validation in http.cookies
 **Description:**
 The fix for CVE-2026-0672, which rejected control characters in http.cookies.Morsel, was incomplete. The Morsel.update(), |= operator, and unpickling paths were not patched, allowing control characters to bypass input validation. Additionally, BaseCookie.js_output() lacked the output validation applied to BaseCookie.output().
