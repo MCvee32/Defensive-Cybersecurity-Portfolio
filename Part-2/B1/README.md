@@ -1,16 +1,12 @@
 # Part 2 - B1: Discover 5 unique weak/vulnerable security implementations
+- I investigated the following websites to discover their strong security implementations:
+  - https://www.partymixperth.com
+  - https://oceankeysspabeauty.com.au
+### 1. WordPress admin login publicly accessible at the default path (Ocean Keys Spa and Beauty)
+Leaving the login at the default path (/wp-admin and /wp-login.php) exposes it to credential stuffing, brute-force attacks, and XML-RPC abuse without any additional friction. A secure WordPress installation would relocate this path, block it behind IP allowlisting, or at minimum add a CAPTCHA, which this website does not implement.
 
-### 1. Default Credentials
-Many IoT devices like home routers and smart cameras are shipped with default passwords (e.g. admin/admin)
-
-**Why this is weak**
-Users often don't change them, leaving devices vulnerable to attackers who know or can guess the default credentials
-
-### 2. Poor Network Segmentation
-A network is not seperated into seperate zone (e.g. clinet WIFI, staff WIFI)
-
-**Why this is weak**
-If an attacker or malware gains access to one part of the network, they can move laterally and reach sensitive areas
+### 2. Public business email on a personal Hotmail address (Ocean Keys Spa and Beauty)
+The publicly listed contact email is oceankeysspabeauty@hotmail.com. Using a free consumer email service for business communications introduces several security risks, no custom domain means no control over SPF/DKIM/DMARC email authentication records (vulnerable to email spoofing and phishing attacks), no admin-level audit logging, no ability to enforce MFA policies across the account centrally, and no data residency guarantees. A compromised Hotmail account would also directly expose all customer enquiry history.
 
 ### 3. Unencrypted Public WIFI
 A WIFI network not using encryption e.g. WPA2
