@@ -1,18 +1,15 @@
 # Part 2 - B2: Discover 5 unique strong security implementations
-### 1. Multi-Factor Authentication
-Requiring users to provide multiple factors of authentication before gaining access to a system
-**Security Benefit:**
-Even if a single factor is leaked or known by an attacker, they will still need to provide a second factor before gaining access
+- I investigated the following websites to discover their strong security implementations:
+  - https://www.partymixperth.com
+  - https://oceankeysspabeauty.com.au
+### 1. PCI-DSS compliant payment processing (Party Mix)
+Party Mix's online checkout accepts Visa, Mastercard, Apple Pay, Google Pay, Shop Pay, and UnionPay, all processed entirely through Shopify Payments. Card data never touches Party Mix Perth's own servers. Shopify is a Level 1 PCI-DSS certified service provider, meaning the most sensitive part of the transaction (cardholder data entry, transmission, and storag) is handled by infrastructure that undergoes rigorous annual third-party audits. Outsourcing the hardest seccurity problem to dedicated experts is a strong security implmentation for a small retailer.
 
-### 2. End-to-End Encryption
-Ensures data is encrypted on the sender's device and only decrypted by the recipient
-**Security Benefit:**
-Prevents third parties from reading messages, intercepted data is unreable. Only the sender and receiver are able to read messages
+### 2. HTTPS enforced across the enitre site (Party Mix)
+All pages, including product listings, account authentication, and the wholesale login, are served exclusively over HTTPS. This ensures all data in transit, including login credentials, session tokens, and browsing behaviour is encrypted and protected from interception on networks like public Wi-Fi. The TLS certificate is managed by Shopify, meaning it is automatically renewed and unlikely to expire unexpectedly
 
-### 3. Principle of Least Privilege
-Implemented in access control. User permissions are limited to only what is necessary to perform their tasks/role.
-**Security Benefit:**
-Reduces the risk of accidental or intentional misuse of privileges, can limit damage if an account or system is compromised
+### 3. OTP-based authentication for booking system (Ocean Keys Spa and Beauty)
+When a customer signs in, they enter their first name and mobile number, and receive an SMS code to authenticate. This is functionally equivalent to SMS-based MFA, and critically it means there is no stored password that can be leaked, phished, or credential-stuffed. Even if a customer's email or phone number is known, an attacker cannot log in without access to the physical device. This is a meaningfully stronger authentication design than a username/password system.
 
 ### 4. Regular Security Patching and Updates
 Ensuring systems are up to date with latest security patch/updates. Can be updated automatically.
