@@ -1,6 +1,5 @@
 # Part 2 - B1: Discover 5 unique weak/vulnerable security implementations
 - I investigated the following websites to discover their strong security implementations:
-  - https://www.partymixperth.com
   - https://oceankeysspabeauty.com.au
 ### 1. WordPress admin login publicly accessible at the default path (Ocean Keys Spa and Beauty)
 Leaving the login at the default path (/wp-admin and /wp-login.php) exposes it to credential stuffing, brute-force attacks, and XML-RPC abuse without any additional friction. A secure WordPress installation would relocate this path, block it behind IP allowlisting, or at minimum add a CAPTCHA, which this website does not implement.
