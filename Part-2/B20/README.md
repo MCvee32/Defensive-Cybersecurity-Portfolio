@@ -5,14 +5,14 @@ An open-source , extensible and easy-to-use URL shortener.
 
 ### Security Issue
 SSRF (Server-Side Request Forgery) risk  
-Impact: internal network access, cloud metadata theft, open redirect abuse
+Impact: internal network access, cloud metadata theft, open redirect abuse  
 **Affected File:** utilities/urls.py  
 **Vulnerable Code:** regex allows any IP incuding private ranges  
 ```
 def validate_url(url): regex = re.compile( r'...' r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}|' # any IPv4 — no range check r'localhost|' # loopback allowed ... ) # No check whether the IP is private or reserved
 ```
 **Attack:** shorten http://169.254.169.254/latest/meta-data/iam/security-credentials/  
-- Pygmy redirects any visitor to the AWS metadata endpoint, leaking IAM credentials from the host EC2 instance.
+- Pygmy redirects any visitor to the AWS metadata endpoint, leaking IAM credentials from the host EC2 instance.  
 
 ### Security Enhancement
 Adds _is_ssrf_safe() helper and blocked network list into utilities/urls.py  
@@ -56,4 +56,4 @@ def _is_ssrf_safe(hostname):
     return True
 ```
 ### Pull Request
-
+<img width="628" height="811" alt="Screenshot 2026-04-13 at 4 13 14 pm" src="https://github.com/user-attachments/assets/3181397f-3707-4943-abcb-0f293535828b" />
