@@ -11,7 +11,65 @@ Participants/Students will:
 5. Observe what happens when access is denied
 
 ```python
+# RBAC Cybersecurity Learning Activity
 
+# Define roles and permissions
+roles = {
+    "admin": ["read", "write", "delete", "modify_users"],
+    "manager": ["read", "write"],
+    "employee": ["read"],
+    "guest": []
+}
+
+# Users
+users = {
+    "alice": "admin",
+    "bob": "manager",
+    "charlie": "employee",
+    "david": "guest"
+}
+
+def login():
+    username = input("Enter your username: ").lower()
+    
+    if username in users:
+        role = users[username]
+        print(f"\nWelcome {username}! Your role is: {role}")
+        return role
+    else:
+        print("User not found. Assigned role: guest")
+        return "guest"
+
+def show_permissions(role):
+    print("\nYour permissions:")
+    for perm in roles[role]:
+        print(f"- {perm}")
+
+def access_resource(role):
+    print("\nTry to access a resource:")
+    action = input("Enter action (read/write/delete/modify_users): ").lower()
+    
+    if action in roles[role]:
+        print("Access granted!")
+    else:
+        print("Access denied!")
+
+def main():
+    print("RBAC Simulation Activity")
+    
+    role = login()
+    show_permissions(role)
+    
+    while True:
+        access_resource(role)
+        again = input("\nTry again? (yes/no): ").lower()
+        if again != "yes":
+            break
+
+    print("\nEnd. Complete Reflection Questions.")
+
+if __name__ == "__main__":
+    main()
 ```
 
 ### Activity
@@ -27,7 +85,7 @@ This activity demonstrates how Role-Based Access Control (RBAC) works through an
 
 By attempting to perform various actions (such as reading, writing, or deleting data), participants will observe how access is either granted or denied based on their role. This helps illustrate key cybersecurity principles such as authorization, least privilege, and the importance of properly configured access controls in preventing unauthorized actions.
 
-**Activty Tasks:**  
+**Activity Tasks:**  
 Complete each task and answer questions  
 **Task 1:** Login  
 - Try logging in as different users:
