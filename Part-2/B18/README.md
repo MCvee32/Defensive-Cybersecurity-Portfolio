@@ -16,7 +16,7 @@ Adds a new binary checker for Traefik, a widely open-source reverse proxy and lo
 
 ### Files Added
 **File Created:** cve_bin_tool/checkers/traefik.py  
-- New checker class with version, filename, and contains patterns
+- New checker class with version, filename, and contains patterns  
 **Code:**  
 ```
 """
