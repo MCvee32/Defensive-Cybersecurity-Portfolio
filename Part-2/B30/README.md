@@ -5,174 +5,245 @@
 Using Grok AI for image generation  
 <img width="1168" height="784" alt="3exqf" src="https://github.com/user-attachments/assets/fd687a91-c943-42fe-aaa4-fd1f4e38ff13" />
 
-**2. Apply imperceptible watermark**  
-Watermark is applied using LSB steganography  
-**Code for adding watermark:**  
+**2. Create Code for Embedding Watermark, Applying Transformations, and Verifying if watermark survives.**
 ```python
-# Embed watermark
-WATERMARK = "B30-WATERMARK-2026"
-bits = text_to_bits(WATERMARK)
-flat = pixels.flatten().copy()
-bit_idx = 0
-i = 0
-while i < len(flat) - 2 and bit_idx < len(bits):
-    for ch in range(3):
-        if bit_idx >= len(bits): break
-        flat[i+ch] = (flat[i+ch] & 0xFE) | bits[bit_idx]
-        bit_idx += 1
-    i += 3
 
-wm_pixels = flat.reshape(pixels.shape)
-img_wm = Image.fromarray(wm_pixels.astype(np.uint8))
-img_wm.save("/home/claude/watermarked.png")
+import cv2
+import numpy as np
+from PIL import Image
+import os
 
-psnr = calculate_psnr(pixels, wm_pixels)
-max_delta = int(np.max(np.abs(pixels.astype(int) - wm_pixels.astype(int))))
-diff_amp = np.clip(np.abs(pixels.astype(int) - wm_pixels.astype(int)) * 50, 0, 255).astype(np.uint8)
-Image.fromarray(diff_amp).save("/home/claude/diff_amplified.png")
-print(f"PSNR: {psnr:.2f} dB | Max delta: {max_delta}")
+# ---------- Configuration ----------
+INPUT_IMG  = "/mnt/user-data/uploads/3exqf.jpg"
+OUT_DIR    = "/home/claude/watermark"
+BLOCK      = 8                          # 8x8 DCT blocks (JPEG-style)
+ALPHA      = 25.0                       # embedding strength
+REDUNDANCY = 3                          # embed each bit in N blocks, majority vote
+# Watermark payload: a 64-bit signature
+WATERMARK_BITS = np.array(
+    [1,0,1,1,0,0,1,0, 1,1,0,0,1,0,1,1,
+     0,1,1,0,1,0,0,1, 1,0,0,1,0,1,1,0,
+     1,1,1,0,0,1,0,1, 0,0,1,1,0,1,1,0,
+     1,0,1,0,1,1,0,0, 0,1,1,0,1,0,1,1], dtype=np.int32
+)
+# Low-frequency coefficient pair (survives JPEG quantization at q=60)
+COEF_A = (1, 2)
+COEF_B = (2, 1)
+
+
+def embed_watermark(img_bgr, bits, alpha=ALPHA, redundancy=REDUNDANCY):
+    """Embed bits in the Y (luminance) channel using DCT coefficient swapping.
+    Each bit is embedded in `redundancy` consecutive blocks for robustness."""
+    ycrcb = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2YCrCb).astype(np.float32)
+    Y = ycrcb[:, :, 0]
+    h, w = Y.shape
+    bh, bw = h // BLOCK, w // BLOCK
+
+    # Expand bits with redundancy
+    expanded = np.repeat(bits, redundancy)
+    n = len(expanded)
+    if n > bh * bw:
+        raise ValueError("Image too small for payload + redundancy")
+
+    idx = 0
+    for by in range(bh):
+        for bx in range(bw):
+            if idx >= n: break
+            y, x = by * BLOCK, bx * BLOCK
+            block = Y[y:y+BLOCK, x:x+BLOCK]
+            dct = cv2.dct(block)
+
+            a, b = dct[COEF_A], dct[COEF_B]
+            bit = expanded[idx]
+            if bit == 1:
+                if a <= b + alpha:
+                    mid = (a + b) / 2
+                    dct[COEF_A] = mid + alpha / 2
+                    dct[COEF_B] = mid - alpha / 2
+            else:
+                if b <= a + alpha:
+                    mid = (a + b) / 2
+                    dct[COEF_A] = mid - alpha / 2
+                    dct[COEF_B] = mid + alpha / 2
+
+            Y[y:y+BLOCK, x:x+BLOCK] = cv2.idct(dct)
+            idx += 1
+        if idx >= n: break
+
+    ycrcb[:, :, 0] = np.clip(Y, 0, 255)
+    out = cv2.cvtColor(ycrcb.astype(np.uint8), cv2.COLOR_YCrCb2BGR)
+    return out
+
+
+def extract_watermark(img_bgr, n_bits=len(WATERMARK_BITS), redundancy=REDUNDANCY):
+    """Extract bits via majority vote across redundant blocks."""
+    ycrcb = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2YCrCb).astype(np.float32)
+    Y = ycrcb[:, :, 0]
+    h, w = Y.shape
+    bh, bw = h // BLOCK, w // BLOCK
+
+    raw = []
+    n_total = n_bits * redundancy
+    for by in range(bh):
+        for bx in range(bw):
+            if len(raw) >= n_total: break
+            y, x = by * BLOCK, bx * BLOCK
+            block = Y[y:y+BLOCK, x:x+BLOCK]
+            dct = cv2.dct(block)
+            raw.append(1 if dct[COEF_A] > dct[COEF_B] else 0)
+        if len(raw) >= n_total: break
+
+    raw = np.array(raw[:n_total]).reshape(n_bits, redundancy)
+    # Majority vote per bit
+    bits = (raw.sum(axis=1) > redundancy // 2).astype(np.int32)
+    return bits
+
+
+def detection_score(extracted, original=WATERMARK_BITS):
+    """Return % of bits matching. >= ~70% indicates watermark detected."""
+    matches = np.sum(extracted == original)
+    return 100.0 * matches / len(original)
+
+
+def psnr(a, b):
+    mse = np.mean((a.astype(np.float32) - b.astype(np.float32)) ** 2)
+    if mse == 0: return float('inf')
+    return 20 * np.log10(255.0 / np.sqrt(mse))
+
+
+# ============ STEP 1: Embed watermark ============
+print("="*60)
+print("STEP 1: EMBEDDING IMPERCEPTIBLE WATERMARK")
+print("="*60)
+original = cv2.imread(INPUT_IMG)
+# Crop to multiple of BLOCK
+h, w = original.shape[:2]
+h, w = (h // BLOCK) * BLOCK, (w // BLOCK) * BLOCK
+original = original[:h, :w]
+print(f"Image size:        {w} x {h}")
+print(f"Watermark payload: {len(WATERMARK_BITS)} bits")
+
+watermarked = embed_watermark(original, WATERMARK_BITS)
+cv2.imwrite(f"{OUT_DIR}/01_watermarked.png", watermarked)
+
+# Verify imperceptibility
+psnr_val = psnr(original, watermarked)
+print(f"PSNR (vs original): {psnr_val:.2f} dB  (>40 dB = imperceptible)")
+
+# Verify extraction works on clean watermarked image
+extracted_clean = extract_watermark(watermarked)
+score_clean = detection_score(extracted_clean)
+print(f"Detection on clean watermarked: {score_clean:.1f}% bit match")
+
+# ============ STEP 2: Apply 3 transformations ============
+print()
+print("="*60)
+print("STEP 2: APPLYING 3 TRANSFORMATIONS")
+print("="*60)
+
+results = []
+
+# --- Transformation 1: JPEG re-compression (quality 60) ---
+# Simulates the lossy compression every image-to-image pipeline applies.
+print("\n[1/3] JPEG recompression (quality=60)")
+cv2.imwrite(f"{OUT_DIR}/02a_transform1_jpeg.jpg", watermarked,
+            [cv2.IMWRITE_JPEG_QUALITY, 60])
+t1 = cv2.imread(f"{OUT_DIR}/02a_transform1_jpeg.jpg")
+ext1 = extract_watermark(t1)
+s1 = detection_score(ext1)
+results.append(("JPEG q=60 recompression", s1, psnr(watermarked, t1)))
+print(f"        Detection: {s1:.1f}% bit match")
+
+# --- Transformation 2: Gaussian blur + brightness/contrast adjustment ---
+# Mimics image-to-image style transfer / neural smoothing artefacts.
+print("\n[2/3] Gaussian blur + brightness/contrast shift")
+t2 = cv2.GaussianBlur(watermarked, (3, 3), 0.6)
+t2 = cv2.convertScaleAbs(t2, alpha=1.10, beta=8)   # +10% contrast, +8 brightness
+cv2.imwrite(f"{OUT_DIR}/02b_transform2_blur_color.png", t2)
+ext2 = extract_watermark(t2)
+s2 = detection_score(ext2)
+results.append(("Blur + brightness/contrast", s2, psnr(watermarked, t2)))
+print(f"        Detection: {s2:.1f}% bit match")
+
+# --- Transformation 3: Resize down then back up (image-to-image regen sim) ---
+# Mimics what happens inside a diffusion img2img encode/decode cycle.
+print("\n[3/3] Downscale 70% -> upscale + Gaussian noise (img2img regen sim)")
+small = cv2.resize(watermarked, (int(w*0.7), int(h*0.7)),
+                   interpolation=cv2.INTER_AREA)
+t3 = cv2.resize(small, (w, h), interpolation=cv2.INTER_CUBIC)
+noise = np.random.normal(0, 2.5, t3.shape).astype(np.float32)
+t3 = np.clip(t3.astype(np.float32) + noise, 0, 255).astype(np.uint8)
+cv2.imwrite(f"{OUT_DIR}/02c_transform3_resize_noise.png", t3)
+ext3 = extract_watermark(t3)
+s3 = detection_score(ext3)
+results.append(("Resize cycle + noise (img2img sim)", s3, psnr(watermarked, t3)))
+print(f"        Detection: {s3:.1f}% bit match")
+
+# ============ STEP 3: Summary ============
+print()
+print("="*60)
+print("STEP 3: ROBUSTNESS SUMMARY")
+print("="*60)
+print(f"{'Transformation':<40} {'Detect %':>10} {'PSNR dB':>10}")
+print("-"*60)
+print(f"{'(baseline: clean watermarked)':<40} {score_clean:>9.1f}% {psnr_val:>9.2f}")
+for name, score, p in results:
+    survived = "SURVIVED" if score >= 70 else "lost"
+    print(f"{name:<40} {score:>9.1f}% {p:>9.2f}   {survived}")
+print()
+print("Threshold for 'detected': >=70% bit-match (random = 50%).")
+print("All output files written to /home/claude/watermark/")
+
+# Save a small report
+with open(f"{OUT_DIR}/report.txt", "w") as f:
+    f.write("B30 Watermark Robustness Test\n")
+    f.write("="*40 + "\n\n")
+    f.write(f"Method: Block DCT (8x8) mid-frequency coefficient swap\n")
+    f.write(f"Channel: Blue\n")
+    f.write(f"Coefficients used: {COEF_A} <-> {COEF_B}, alpha={ALPHA}\n")
+    f.write(f"Payload: 64-bit signature\n")
+    f.write(f"PSNR vs original: {psnr_val:.2f} dB (imperceptible)\n\n")
+    f.write(f"Baseline detection (no transform): {score_clean:.1f}%\n\n")
+    f.write("Transformations applied:\n")
+    for name, score, p in results:
+        verdict = "SURVIVED" if score >= 70 else "lost"
+        f.write(f"  - {name}: {score:.1f}% match -> {verdict}\n")
+    f.write("\nDetection threshold: >=70% bit match (random baseline = 50%).\n")
+print("\nReport saved to report.txt")
 ```
-**Image with watermark imperceptible:**  
-<img width="1168" height="784" alt="watermarked" src="https://github.com/user-attachments/assets/4f2bdbc2-b38f-49aa-8b45-67dded7cfda8" />
+### Outputs: 
+**Image with watermark embedded:**  
+<img width="1168" height="784" alt="01_watermarked" src="https://github.com/user-attachments/assets/3255a248-356a-42c9-95ae-5fde6b390a82" />
 
-**3. Perform image-to-image regeneration or editing**  
-**Code for applying transformations:**  
-```python
-# Transformations
-def apply_transform(img, method):
-    if method == "brightness":
-        return ImageEnhance.Brightness(img).enhance(1.15)
-    elif method == "contrast":
-        return ImageEnhance.Contrast(img).enhance(1.2)
-    elif method == "blur":
-        return img.filter(ImageFilter.GaussianBlur(radius=1))
-    elif method == "noise":
-        arr = np.array(img, dtype=np.int16)
-        arr = np.clip(arr + np.random.randint(-3, 4, arr.shape, dtype=np.int16), 0, 255)
-        return Image.fromarray(arr.astype(np.uint8))
-    elif method == "jpeg":
-        tmp = "/home/claude/_tmp.jpg"
-        img.save(tmp, format="JPEG", quality=85)
-        return Image.open(tmp).convert("RGB")
-    elif method == "crop_resize":
-        w, h = img.size
-        m = int(w * 0.05)
-        return img.crop((m, m, w-m, h-m)).resize((w, h), Image.LANCZOS)
+**Transformation 1: JPEG re-compression (quality 60)**  
+- Saves the image as a lower quality jpeg
+<img width="1168" height="784" alt="02a_transform1_jpeg" src="https://github.com/user-attachments/assets/cab9e2e2-f139-42ec-88e0-74de3eb247cd" />
 
-METHODS = ["brightness", "contrast", "noise", "blur", "jpeg", "crop_resize"]
-LABELS  = {"brightness":"Brightness +15%","contrast":"Contrast ×1.2","noise":"Noise ±3",
-           "blur":"Gaussian blur r=1","jpeg":"JPEG Q85","crop_resize":"Crop+resize 90%"}
+**Transformation 2: Blur and Brightness/Contrast Shift**  
+<img width="1168" height="784" alt="02b_transform2_blur_color" src="https://github.com/user-attachments/assets/b7524104-d4a1-4047-8b24-d4a2fdb037e3" />
 
-transformed = {}
-for m in METHODS:
-    t = apply_transform(img_wm, m)
-    t.save(f"/home/claude/tx_{m}.png")
-    transformed[m] = np.array(t, dtype=np.uint8)
+**Transformation 3: Resize down, then back up and adding noise**  
+- Simulates an image-to-image regeneration
+<img width="1168" height="784" alt="02c_transform3_resize_noise" src="https://github.com/user-attachments/assets/e1866b99-fee3-474d-ae5c-0477b8f99882" />
+
+**Watermark Survivability Report Contents**
 ```
-**4. Watermark detection (testing watermark survival)**  
-**Code for detecting watermark survival:**  
-```python
-# Detect
-def detect(arr):
-    f = arr.flatten()
-    extracted = []
-    i = 0
-    while i < len(f)-2 and len(extracted) < len(bits):
-        for ch in range(3):
-            if len(extracted) >= len(bits): break
-            extracted.append(f[i+ch] & 1)
-        i += 3
-    correct = sum(a==b for a,b in zip(bits, extracted))
-    return correct/len(bits)*100, bits_to_text(extracted)
- 
-results = {}
-for m in METHODS:
-    acc, decoded = detect(transformed[m])
-    results[m] = {"acc": acc, "decoded": decoded}
- 
-print("\n─── Results ───")
-for m, r in results.items():
-    sym = "PASS ✓" if r['acc']>=95 else "PARTIAL ~" if r['acc']>=75 else "FAIL ✗"
-    print(f"  {LABELS[m]:22s}  {r['acc']:5.1f}%  {sym}  '{r['decoded']}'")
-```
-**5. Results**  
-**Code for printing results visually:**  
-```python
-# Figure
-PC = '#1D9E75'; WC = '#EF9F27'; FC = '#E24B4A'
-fig = plt.figure(figsize=(18, 14), facecolor='#0f0f0f')
-fig.suptitle("B30 — Watermark Pipeline: AI Image (Grok) | LSB Steganography",
-             fontsize=15, color='white', fontweight='bold', y=0.99)
-gs = gridspec.GridSpec(4, 4, figure=fig, hspace=0.5, wspace=0.3)
- 
-# Top row
-for ax, arr, title in [
-    (fig.add_subplot(gs[0,0]), pixels,    "Original image"),
-    (fig.add_subplot(gs[0,1]), wm_pixels, f"Watermarked\nPSNR {psnr:.1f} dB"),
-    (fig.add_subplot(gs[0,2]), diff_amp,  f"Difference ×50\nmax Δ={max_delta}px"),
-]:
-    ax.imshow(arr); ax.set_title(title, color='white', fontsize=9, pad=5); ax.axis('off')
- 
-ax_info = fig.add_subplot(gs[0,3])
-ax_info.set_facecolor('#12122a'); ax_info.axis('off')
-lines = [("WATERMARK", '#5ab4d6', 10, True),
-         (f'"{WATERMARK}"', '#e8e8e8', 8, False), ("", None, 8, False),
-         (f"Bits: {len(bits)}", '#aaa', 8, False),
-         (f"PSNR: {psnr:.1f} dB", '#aaa', 8, False),
-         (f"Max Δ: {max_delta}/255", '#aaa', 8, False),
-         (f"Size: {W}×{H}", '#aaa', 8, False), ("", None, 8, False),
-         (">40 dB = imperceptible", PC, 8, False)]
-for k, (txt, col, sz, bold) in enumerate(lines):
-    if col:
-        ax_info.text(0.07, 0.95-k*0.10, txt, transform=ax_info.transAxes,
-                     color=col, fontsize=sz, va='top',
-                     fontweight='bold' if bold else 'normal')
- 
-# Transformed images
-for idx, m in enumerate(METHODS):
-    row, col = 1 + idx//4, idx%4
-    ax = fig.add_subplot(gs[row, col])
-    ax.imshow(transformed[m])
-    r = results[m]
-    sc = PC if r['acc']>=95 else WC if r['acc']>=75 else FC
-    sym = "✓" if r['acc']>=95 else "~" if r['acc']>=75 else "✗"
-    ax.set_title(f"{LABELS[m]}\n{r['acc']:.1f}% {sym}", color=sc, fontsize=8.5, pad=4, fontweight='bold')
-    ax.axis('off')
-    ax.add_patch(plt.Rectangle((0,0.93), r['acc']/100, 0.07,
-                 transform=ax.transAxes, color=sc, alpha=0.9, zorder=5))
- 
-# Bar chart
-ax_bar = fig.add_subplot(gs[3, 2:])
-ax_bar.set_facecolor('#12122a')
-accs   = [results[m]['acc'] for m in METHODS]
-colors = [PC if a>=95 else WC if a>=75 else FC for a in accs]
-bars   = ax_bar.barh([LABELS[m] for m in METHODS], accs, color=colors, height=0.55, edgecolor='none')
-ax_bar.set_xlim(0, 110)
-ax_bar.axvline(95, color='white', ls='--', lw=0.9, alpha=0.5, label='Pass ≥95%')
-ax_bar.axvline(75, color=WC, ls='--', lw=0.9, alpha=0.5, label='Partial ≥75%')
-for bar, acc in zip(bars, accs):
-    ax_bar.text(bar.get_width()+1, bar.get_y()+bar.get_height()/2,
-                f'{acc:.1f}%', va='center', color='white', fontsize=8.5)
-ax_bar.tick_params(colors='white', labelsize=8.5)
-for sp in ax_bar.spines.values(): sp.set_color('#333')
-ax_bar.set_xlabel("Bit accuracy (%)", color='white', fontsize=9)
-ax_bar.set_title("Watermark survival across transformations", color='white', fontsize=10)
-ax_bar.legend(fontsize=8, facecolor='#222', labelcolor='white', framealpha=0.7)
- 
-plt.savefig("/home/claude/watermark_results.png", dpi=150, bbox_inches='tight', facecolor='#0f0f0f')
-for f in ["original.png","watermarked.png","diff_amplified.png","watermark_results.png"]:
-    shutil.copy(f"/home/claude/{f}", f"/mnt/user-data/outputs/{f}")
-print("Done. Outputs saved.")
-```
-**Output:**  
-<img width="2547" height="1364" alt="watermark_results" src="https://github.com/user-attachments/assets/a4b62c91-92ab-4464-bd43-950d03abecb2" />
-As we can see from the results the watermark was only able to survive the blur transformation.  
+B30 Watermark Robustness Test
+========================================
 
-**Why blur passes but everything else fails:**  
-LSB encoding hides data in the least significant bit, a ±1/255 change per pixel (PSNR 73 dB, completely invisible), but that makes it extremely fragile:  
-- Brightness/contrast shift all pixel values by a fixed amount, which carries into the LSB on nearly every pixel
-- JPEG quantisation rounds DCT coefficients, destroying LSB data even at Q98
-- Noise adds random ±1 flips directly to the LSBs
-- Crop+resize uses interpolation (LANCZOS), which blends adjacent pixels and averages out the LSBs
-- Horizontal flip moves pixels to new positions — the decoder looks for the watermark at the original coordinates, so it reads noise  
-The light blur (r=0.5) barely modifies pixel values in smooth regions, so most of the 100 redundant copies survive.
+Method: Block DCT (8x8) mid-frequency coefficient swap
+Channel: Blue
+Coefficients used: (1, 2) <-> (2, 1), alpha=25.0
+Payload: 64-bit signature
+PSNR vs original: 58.21 dB (imperceptible)
+
+Baseline detection (no transform): 100.0%
+
+Transformations applied:
+  - JPEG q=60 recompression: 100.0% match -> SURVIVED
+  - Blur + brightness/contrast: 100.0% match -> SURVIVED
+  - Resize cycle + noise (img2img sim): 100.0% match -> SURVIVED
+
+Detection threshold: >=70% bit match (random baseline = 50%).
+```
+
